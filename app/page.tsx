@@ -85,6 +85,20 @@ export default function Page() {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-20px); }
         }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        @keyframes santaWiggle {
+          0%, 100% { transform: rotate(0deg) scale(1); }
+          25% { transform: rotate(-10deg) scale(1.1); }
+          75% { transform: rotate(10deg) scale(1.1); }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.9; }
+        }
       `
       document.head.appendChild(styleSheet)
       
@@ -195,11 +209,91 @@ export default function Page() {
 }
 
 function StartScreen({ onStart }: { onStart: () => void }) {
+  const [pin, setPin] = useState("")
+  const [pinError, setPinError] = useState(false)
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const correctPin = "0102"
+  
+  // Obliczanie czasu do świąt
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const christmas = new Date('2025-12-24T00:01:00')
+      const now = new Date()
+      const difference = christmas.getTime() - now.getTime()
+      
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24))
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+        const minutes = Math.floor((difference / 1000 / 60) % 60)
+        const seconds = Math.floor((difference / 1000) % 60)
+        
+        setTimeLeft({ days, hours, minutes, seconds })
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+      }
+    }
+    
+    calculateTimeLeft()
+    const timer = setInterval(calculateTimeLeft, 1000)
+    
+    return () => clearInterval(timer)
+  }, [])
+  
+  const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 4) // tylko cyfry, max 4
+    setPin(value)
+    setPinError(false)
+  }
+  
+  const handleStart = () => {
+    if (pin === correctPin) {
+      onStart()
+    } else {
+      setPinError(true)
+      setTimeout(() => {
+        setPin("")
+        setPinError(false)
+      }, 2000)
+    }
+  }
+
   return (
     <div style={styles.container}>
       <Snowfall />
       <div style={styles.card}>
         <div style={styles.welcomeTitle}>🎄 Julka ratuje święta 🎄</div>
+        
+        {/* Timer do świąt */}
+        <div style={styles.christmasTimer}>
+          <div style={styles.timerTitle}>
+            <span style={styles.santaIcon}>🎅</span>
+            Do świąt pozostało:
+            <span style={styles.santaIcon}>🎅</span>
+          </div>
+          <div style={styles.timerDisplay}>
+            <div style={styles.timeUnit}>
+              <div style={styles.timeNumber}>{timeLeft.days}</div>
+              <div style={styles.timeLabel}>dni</div>
+            </div>
+            <div style={styles.timeSeparator}>:</div>
+            <div style={styles.timeUnit}>
+              <div style={styles.timeNumber}>{String(timeLeft.hours).padStart(2, '0')}</div>
+              <div style={styles.timeLabel}>godz</div>
+            </div>
+            <div style={styles.timeSeparator}>:</div>
+            <div style={styles.timeUnit}>
+              <div style={styles.timeNumber}>{String(timeLeft.minutes).padStart(2, '0')}</div>
+              <div style={styles.timeLabel}>min</div>
+            </div>
+            <div style={styles.timeSeparator}>:</div>
+            <div style={styles.timeUnit}>
+              <div style={styles.timeNumber}>{String(timeLeft.seconds).padStart(2, '0')}</div>
+              <div style={styles.timeLabel}>sek</div>
+            </div>
+          </div>
+          <div style={styles.timerDecoration}>🎁 🎄 ⛷️ ❄️ 🎁</div>
+        </div>
+        
         <div style={styles.welcomeText}>Pomóż Julce rozwiązać 6 zagadek świątecznych. Czeka Cię mnóstwo prezentów!</div>
         <div style={styles.instructions}>
           <p>Instrukcja:</p>
@@ -210,7 +304,32 @@ function StartScreen({ onStart }: { onStart: () => void }) {
             <li>Po 6 pytaniach - główny prezent!</li>
           </ul>
         </div>
-        <button onClick={onStart} style={styles.startButton}>
+        
+        <div style={styles.pinContainer}>
+          <label style={styles.pinLabel}>🔐 Wpisz PIN startowy:</label>
+          <input
+            type="text"
+            value={pin}
+            onChange={handlePinChange}
+            placeholder="----"
+            maxLength={4}
+            style={{
+              ...styles.pinInput,
+              borderColor: pinError ? "#dc3545" : "#ddd",
+              animation: pinError ? "shake 0.5s" : "none"
+            }}
+          />
+          {pinError && (
+            <div style={styles.pinError}>
+              ❌ Nieprawidłowy PIN! Spróbuj ponownie.
+            </div>
+          )}
+        </div>
+        
+        <button 
+          onClick={handleStart} 
+          style={styles.startButton}
+        >
           Zaczynamy! 🎁
         </button>
       </div>
@@ -232,20 +351,40 @@ function FinishScreen() {
 }
 
 function Snowfall() {
+  const [snowflakes, setSnowflakes] = useState<Array<{
+    id: number;
+    left: string;
+    delay: string;
+    duration: string;
+    size: string;
+  }>>([])
+
+  useEffect(() => {
+    // Generuj śnieżki tylko po stronie klienta
+    const flakes = [...Array(50)].map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 5}s`,
+      duration: `${5 + Math.random() * 5}s`,
+      size: `${4 + Math.random() * 10}px`,
+    }))
+    setSnowflakes(flakes)
+  }, [])
+
   return (
     <div style={styles.snowfallContainer}>
-      {[...Array(50)].map((_, i) => (
+      {snowflakes.map((flake) => (
         <div
-          key={i}
+          key={flake.id}
           style={{
             ...styles.snowflake,
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            animationDuration: `${5 + Math.random() * 5}s`,
+            left: flake.left,
+            animationDelay: flake.delay,
+            animationDuration: flake.duration,
+            width: flake.size,
+            height: flake.size,
           }}
-        >
-          ❄
-        </div>
+        />
       ))}
     </div>
   )
@@ -274,9 +413,11 @@ const styles = {
   snowflake: {
     position: "absolute",
     top: "-10px",
-    fontSize: "24px",
+    background: "white",
+    borderRadius: "50%",
     animation: "fall linear infinite",
     opacity: 0.8,
+    boxShadow: "0 0 10px rgba(255, 255, 255, 0.8)",
   } as const,
   card: {
     background: "white",
@@ -447,5 +588,93 @@ const styles = {
     fontSize: "48px",
     textAlign: "center",
     animation: "bounce 1s infinite",
+  } as const,
+  pinContainer: {
+    marginBottom: "20px",
+    textAlign: "center",
+  } as const,
+  pinLabel: {
+    display: "block",
+    fontSize: "16px",
+    fontWeight: "bold",
+    color: "#1a472a",
+    marginBottom: "10px",
+  } as const,
+  pinInput: {
+    width: "150px",
+    padding: "12px",
+    fontSize: "24px",
+    textAlign: "center",
+    border: "2px solid #ddd",
+    borderRadius: "8px",
+    fontWeight: "bold",
+    letterSpacing: "8px",
+    transition: "all 0.3s",
+  } as const,
+  pinError: {
+    color: "#dc3545",
+    fontSize: "14px",
+    marginTop: "8px",
+    fontWeight: "bold",
+  } as const,
+  christmasTimer: {
+    background: "linear-gradient(135deg, #c41e3a, #165b33)",
+    borderRadius: "15px",
+    padding: "20px",
+    marginBottom: "20px",
+    boxShadow: "0 10px 30px rgba(196, 30, 58, 0.3)",
+    animation: "pulse 2s infinite",
+  } as const,
+  timerTitle: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    marginBottom: "15px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+  } as const,
+  santaIcon: {
+    fontSize: "24px",
+    display: "inline-block",
+    animation: "santaWiggle 2s infinite",
+  } as const,
+  timerDisplay: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "5px",
+  } as const,
+  timeUnit: {
+    background: "rgba(255, 255, 255, 0.95)",
+    borderRadius: "10px",
+    padding: "10px 15px",
+    minWidth: "60px",
+    textAlign: "center",
+  } as const,
+  timeNumber: {
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: "#c41e3a",
+    fontFamily: "monospace",
+  } as const,
+  timeLabel: {
+    fontSize: "12px",
+    color: "#165b33",
+    fontWeight: "600",
+    textTransform: "uppercase",
+  } as const,
+  timeSeparator: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    color: "white",
+  } as const,
+  timerDecoration: {
+    textAlign: "center",
+    marginTop: "15px",
+    fontSize: "20px",
+    letterSpacing: "10px",
   } as const,
 }
