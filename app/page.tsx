@@ -71,6 +71,30 @@ export default function Page() {
     }
   }, [cooldownTime])
 
+  // Add animations styles only on client side
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const styleSheet = document.createElement("style")
+      styleSheet.textContent = `
+        @keyframes fall {
+          to {
+            transform: translateY(100vh);
+          }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+        }
+      `
+      document.head.appendChild(styleSheet)
+      
+      // Cleanup function to remove the style element when component unmounts
+      return () => {
+        document.head.removeChild(styleSheet)
+      }
+    }
+  }, [])
+
   const handleCheckAnswer = (idx: number) => {
     const q = CONFIG.questions[currentQuestion]
 
@@ -424,20 +448,4 @@ const styles = {
     textAlign: "center",
     animation: "bounce 1s infinite",
   } as const,
-}
-
-const styleSheet = document.createElement("style")
-styleSheet.textContent = `
-  @keyframes fall {
-    to {
-      transform: translateY(100vh);
-    }
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-  }
-`
-if (typeof document !== "undefined") {
-  document.head.appendChild(styleSheet)
 }
