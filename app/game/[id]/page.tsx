@@ -6,8 +6,9 @@ import { notFound } from 'next/navigation'
 import Snowfall from '@/components/Snowfall'
 import TicTacToeGame from '@/components/TicTacToeGame'
 import QuestionGame from '@/components/QuestionGame'
+import PinInput from '@/components/PinInput'
 import { GAMES_CONFIG } from '@/lib/gameconfig'
-import { unlockNextGame, isGameUnlocked } from '@/lib/gameState'
+import { unlockNextGame, isGameUnlocked, loadGameState } from '@/lib/gameState'
 
 export default function GamePage() {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function GamePage() {
   
   const [showHint, setShowHint] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const [isPinVerified, setIsPinVerified] = useState(false)
 
   useEffect(() => {
     // Check if game is unlocked
@@ -23,6 +25,10 @@ export default function GamePage() {
       router.push('/')
     } else {
       setIsAuthorized(true)
+      // Check if this is the first game (no PIN required)
+      if (gameId === 1) {
+        setIsPinVerified(true)
+      }
     }
   }, [gameId, router])
 
@@ -34,6 +40,14 @@ export default function GamePage() {
   
   if (!game) {
     notFound()
+  }
+
+  // Get PIN from previous game config
+  const previousGame = gameId > 1 ? GAMES_CONFIG.find((g) => g.id === gameId - 1) : null
+  const requiredPin = previousGame?.nextPin || ''
+
+  const handlePinSuccess = () => {
+    setIsPinVerified(true)
   }
 
   const handleGameComplete = () => {
@@ -50,7 +64,7 @@ export default function GamePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
       <Snowfall />
 
       <div className="relative z-10 w-full max-w-md">
@@ -77,7 +91,16 @@ export default function GamePage() {
             </h2>
           </div>
 
-          {!showHint ? (
+          {!isPinVerified && gameId > 1 ? (
+            <div>
+              <div className="text-center mb-6">
+                <p className="text-gray-600 mb-4">
+                  Wpisz PIN znaleziony przy prezencie
+                </p>
+                <PinInput correctPin={requiredPin} onSuccess={handlePinSuccess} />
+              </div>
+            </div>
+          ) : !showHint ? (
             <>
               {game.type === 'tictactoe' ? (
                 <TicTacToeGame onWin={handleGameComplete} />
@@ -93,8 +116,7 @@ export default function GamePage() {
             </>
           ) : (
             <HintScreen
-              giftLocation={game.giftLocation}
-              nextPin={game.nextPin}
+              giftLocation={game.giftLocation ?? null}
               isLastGame={gameId === 6}
               onNext={handleNextGame}
             />
@@ -107,12 +129,10 @@ export default function GamePage() {
 
 function HintScreen({
   giftLocation,
-  nextPin,
   isLastGame,
   onNext,
 }: {
   giftLocation: string | null
-  nextPin: string | null
   isLastGame: boolean
   onNext: () => void
 }) {
@@ -124,16 +144,14 @@ function HintScreen({
       </div>
 
       {giftLocation && (
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 mb-5 border border-emerald-200">
+        <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 mb-5 border border-emerald-200">
           <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">
-            Lokalizacja prezentu
+            🎁 Lokalizacja prezentu
           </div>
-          <div className="text-lg font-bold text-emerald-800 mb-4">{giftLocation}</div>
-          
-          {nextPin && (
-            <div className="bg-white/80 rounded-xl p-4 text-center">
-              <div className="text-xs text-gray-500 mb-1">PIN do następnego zadania</div>
-              <div className="text-2xl font-bold text-amber-600 tracking-widest font-mono">{nextPin}</div>
+          <div className="text-lg font-bold text-emerald-800">{giftLocation}</div>
+          {!isLastGame && (
+            <div className="text-xs text-gray-600 mt-3">
+              💡 Przy prezencie znajdziesz PIN do następnego zadania
             </div>
           )}
         </div>
@@ -141,9 +159,9 @@ function HintScreen({
 
       <button
         onClick={onNext}
-        className="w-full py-4 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-98"
+        className="w-full py-4 rounded-2xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-98"
       >
-        {isLastGame ? 'Zakończ grę' : 'Następne zadanie'}
+        {isLastGame ? 'Zakończ grę' : 'Wróć do menu'}
       </button>
     </div>
   )

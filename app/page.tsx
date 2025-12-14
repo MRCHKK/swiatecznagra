@@ -28,7 +28,7 @@ export default function Page() {
   const gameState = loadGameState()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
       <Snowfall />
       
       <div className="relative z-10 w-full max-w-md">
@@ -68,7 +68,7 @@ export default function Page() {
             {gameState.currentGame <= 6 ? (
               <Link
                 href={`/game/${gameState.currentGame}`}
-                className="inline-block w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold hover:shadow-lg transition-all"
+                className="inline-block w-full py-3 rounded-xl bg-linear-to-r from-emerald-500 to-emerald-600 text-white font-bold hover:shadow-lg transition-all"
               >
                 Kontynuuj grę #{gameState.currentGame}
               </Link>
@@ -98,13 +98,13 @@ export default function Page() {
 
 function StartScreen({ onStart }: { onStart: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
       <Snowfall />
 
       <div className="relative z-10 w-full max-w-md">
         <div className="backdrop-blur-md bg-white/70 rounded-3xl shadow-2xl overflow-hidden border border-white/30">
           {/* Header section */}
-          <div className="bg-gradient-to-r from-red-500/90 to-red-600/90 px-6 py-6 text-center">
+          <div className="bg-linear-to-r from-red-500/90 to-red-600/90 px-6 py-6 text-center">
             <div className="text-4xl mb-2" style={{ animation: 'float 3s ease-in-out infinite' }}>
               🎄
             </div>
@@ -142,7 +142,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
               <label className="block text-center text-sm font-semibold text-gray-700 mb-3">
                 Wpisz PIN startowy
               </label>
-              <PinInput correctPin={START_PIN} onSuccess={onStart} />
+              <PinInput correctPin={START_PIN} onSuccess={onStart} buttonText="Rozpocznij grę" />
             </div>
           </div>
         </div>

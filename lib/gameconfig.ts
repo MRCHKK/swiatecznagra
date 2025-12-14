@@ -27,10 +27,10 @@ export const GAMES_CONFIG: GameConfig[] = [
     giftLocation: 'Sprawdź szafkę w kuchni',
     nextPin: '2412',
     questionData: {
-      question: 'W jakim miesiącu obchodzimy Boże Narodzenie?',
-      answers: ['Listopad', 'Grudzień', 'Styczeń', 'Luty'],
+      question: 'Jaka była data naszego wyjazdu do Wrocławia?',
+      answers: ['18 wrzesień 2024', '28 wrzesień 2024', '19 sierpień 2024', 'Nie byliśmy we Wrocławiu'],
       correctAnswer: 1,
-      clue: 'To ostatni miesiąc roku',
+      clue: 'Było "jeszcze" ciepło',
     },
   },
   {

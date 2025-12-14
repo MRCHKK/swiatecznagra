@@ -9,11 +9,38 @@ interface TicTacToeGameProps {
   onWin: () => void
 }
 
+// Przechowujemy licznik przegranych w localStorage
+const LOSS_COUNT_KEY = 'tictactoe-losses'
+
+function getLossCount(): number {
+  if (typeof window === 'undefined') return 0
+  const saved = localStorage.getItem(LOSS_COUNT_KEY)
+  return saved ? parseInt(saved, 10) : 0
+}
+
+function setLossCount(count: number): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(LOSS_COUNT_KEY, count.toString())
+  }
+}
+
+function resetLossCount(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem(LOSS_COUNT_KEY)
+  }
+}
+
 export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
   const [board, setBoard] = useState<Board>(Array(9).fill(null))
   const [isPlayerTurn, setIsPlayerTurn] = useState(true)
   const [gameOver, setGameOver] = useState(false)
   const [winner, setWinner] = useState<Player>(null)
+  const [playerLosses, setPlayerLosses] = useState(0)
+
+  // Wczytaj licznik przegranych przy montowaniu komponentu
+  useEffect(() => {
+    setPlayerLosses(getLossCount())
+  }, [])
 
   useEffect(() => {
     if (!isPlayerTurn && !gameOver) {
@@ -63,17 +90,47 @@ export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
       setWinner(winner)
       setGameOver(true)
       if (winner === 'X') {
+        // Gracz wygrał - resetuj licznik przegranych
+        resetLossCount()
+        setPlayerLosses(0)
         setTimeout(onWin, 1000)
       }
     } else if (isBoardFull(newBoard)) {
+      // Remis - też zwiększ licznik
       setGameOver(true)
+      const newLossCount = playerLosses + 1
+      setPlayerLosses(newLossCount)
+      setLossCount(newLossCount)
     } else {
       setIsPlayerTurn(false)
     }
   }
 
   const makeComputerMove = () => {
-    const bestMove = findBestMove([...board])
+    // Po 2 przegranych komputer zaczyna grać losowo
+    const shouldPlayDumb = playerLosses >= 2
+    
+    let bestMove = -1
+    
+    if (shouldPlayDumb) {
+      // Tryb głupi - losowy ruch z małą szansą na mądry ruch
+      const randomChance = Math.random()
+      
+      if (randomChance < 0.7) { // 70% szans na całkowicie losowy ruch
+        bestMove = makeRandomMove([...board])
+      } else if (randomChance < 0.9) { // 20% szans na zablokowanie gracza
+        bestMove = findWinningMove([...board], 'X')
+        if (bestMove === -1) {
+          bestMove = makeRandomMove([...board])
+        }
+      } else { // 10% szans na normalną grę
+        bestMove = findBestMove([...board])
+      }
+    } else {
+      // Normalna inteligentna gra
+      bestMove = findBestMove([...board])
+    }
+    
     if (bestMove !== -1) {
       const newBoard = [...board]
       newBoard[bestMove] = 'O'
@@ -83,16 +140,37 @@ export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
       if (winner) {
         setWinner(winner)
         setGameOver(true)
+        if (winner === 'O') {
+          // Komputer wygrał - zwiększ licznik przegranych
+          const newLossCount = playerLosses + 1
+          setPlayerLosses(newLossCount)
+          setLossCount(newLossCount)
+        }
       } else if (isBoardFull(newBoard)) {
+        // Remis - też zwiększ licznik
         setGameOver(true)
+        const newLossCount = playerLosses + 1
+        setPlayerLosses(newLossCount)
+        setLossCount(newLossCount)
       } else {
         setIsPlayerTurn(true)
       }
     }
   }
 
+  const makeRandomMove = (currentBoard: Board): number => {
+    const available = currentBoard
+      .map((cell, index) => (cell === null ? index : null))
+      .filter((i) => i !== null) as number[]
+    
+    if (available.length > 0) {
+      return available[Math.floor(Math.random() * available.length)]
+    }
+    return -1
+  }
+
   const findBestMove = (currentBoard: Board): number => {
-    // Prosty algorytm AI
+    // Normalna inteligentna strategia
     // 1. Sprawdź czy można wygrać
     const winMove = findWinningMove(currentBoard, 'O')
     if (winMove !== -1) return winMove
@@ -112,11 +190,7 @@ export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
     }
 
     // 5. Zajmij dowolne wolne miejsce
-    const available = currentBoard
-      .map((cell, index) => (cell === null ? index : null))
-      .filter((i) => i !== null) as number[]
-    
-    return available.length > 0 ? available[0] : -1
+    return makeRandomMove(currentBoard)
   }
 
   const findWinningMove = (currentBoard: Board, player: Player): number => {

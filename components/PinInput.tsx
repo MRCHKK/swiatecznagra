@@ -6,9 +6,10 @@ interface PinInputProps {
   correctPin: string
   onSuccess: () => void
   onError?: () => void
+  buttonText?: string
 }
 
-export default function PinInput({ correctPin, onSuccess, onError }: PinInputProps) {
+export default function PinInput({ correctPin, onSuccess, onError, buttonText = "Kontynuuj" }: PinInputProps) {
   const [pin, setPin] = useState(['', '', '', ''])
   const [error, setError] = useState(false)
   const inputs = useRef<(HTMLInputElement | null)[]>([])
@@ -55,7 +56,9 @@ export default function PinInput({ correctPin, onSuccess, onError }: PinInputPro
         {pin.map((digit, index) => (
           <input
             key={index}
-            ref={(el) => (inputs.current[index] = el)}
+            ref={(el) => {
+              inputs.current[index] = el
+            }}
             type="text"
             inputMode="numeric"
             maxLength={1}
@@ -85,11 +88,11 @@ export default function PinInput({ correctPin, onSuccess, onError }: PinInputPro
         disabled={!isPinComplete}
         className={`w-full mt-5 py-3.5 rounded-xl font-bold text-base transition-all duration-200 ${
           isPinComplete
-            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 active:scale-98'
+            ? 'bg-linear-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 active:scale-98'
             : 'bg-gray-200/80 text-gray-400 cursor-not-allowed'
         }`}
       >
-        Rozpocznij grę
+        {buttonText}
       </button>
     </div>
   )
