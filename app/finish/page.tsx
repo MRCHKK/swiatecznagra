@@ -24,7 +24,7 @@ export default function FinishPage() {
             Gratulacje Julka!
           </h1>
           <p className="text-gray-600 text-lg mb-6">
-            Uratowałaś święta! Wszystkie zadania zostały ukończone i prezenty czekają na Ciebie!
+            Uratowałaś święta! Wszystkie zadania zostały ukończone i ostatni prezent czeka na Ciebie!
           </p>
           
           <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 mb-6 border border-amber-200">

@@ -8,6 +8,8 @@ interface Snowflake {
   delay: number
   duration: number
   size: number
+  opacity: number
+  swing: number
 }
 
 export default function Snowfall() {
@@ -16,13 +18,16 @@ export default function Snowfall() {
   useEffect(() => {
     const createSnowflakes = () => {
       const flakes: Snowflake[] = []
-      for (let i = 0; i < 50; i++) {
+      // 80 płatków śniegu
+      for (let i = 0; i < 100; i++) {
         flakes.push({
           id: i,
           left: `${Math.random() * 100}%`,
-          delay: Math.random() * 8,
-          duration: 6 + Math.random() * 6,
-          size: 3 + Math.random() * 5,
+          delay: Math.random() * 10,
+          duration: 8 + Math.random() * 8, // 8-16 sekund
+          size: 2 + Math.random() * 6, // 2-8px
+          opacity: 0.3 + Math.random() * 0.6, // 0.3-0.9
+          swing: Math.random() * 80 - 40, // -40 do 40px dla kołysania
         })
       }
       return flakes
@@ -32,20 +37,22 @@ export default function Snowfall() {
   }, [])
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999 }}>
       {snowflakes.map((flake) => (
         <div
           key={flake.id}
-          className="absolute bg-white rounded-full"
+          className="snowflake absolute rounded-full bg-white"
           style={{
             left: flake.left,
             width: `${flake.size}px`,
             height: `${flake.size}px`,
-            top: `${-10 + (flake.delay / 8) * -100}%`,
-            opacity: 0.6 + Math.random() * 0.3,
-            animation: `fall ${flake.duration}s linear infinite`,
-            animationDelay: `-${flake.delay}s`,
-            boxShadow: '0 0 4px rgba(255, 255, 255, 0.5)',
+            opacity: flake.opacity,
+            boxShadow: '0 0 6px rgba(255, 255, 255, 0.8)',
+            filter: 'blur(0.5px)',
+            // @ts-ignore - custom CSS properties
+            '--duration': `${flake.duration}s`,
+            '--delay': `${-flake.delay}s`,
+            '--swing': `${flake.swing}px`,
           }}
         />
       ))}

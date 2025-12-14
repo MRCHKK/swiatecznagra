@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import Snowfall from '@/components/Snowfall'
@@ -20,6 +20,7 @@ export default function GamePage() {
   const [showHint, setShowHint] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [isPinVerified, setIsPinVerified] = useState(false)
+  const pinContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Check if game is unlocked
@@ -33,6 +34,19 @@ export default function GamePage() {
       }
     }
   }, [gameId, router])
+
+  // Scroll to PIN input when showing on mobile
+  useEffect(() => {
+    if (!isPinVerified && gameId > 1 && pinContainerRef.current) {
+      // Delay to ensure keyboard is open
+      setTimeout(() => {
+        pinContainerRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      }, 300)
+    }
+  }, [isPinVerified, gameId])
 
   if (!isAuthorized) {
     return null
@@ -66,21 +80,21 @@ export default function GamePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 py-8 relative overflow-hidden">
       <Snowfall />
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="backdrop-blur-xl bg-white/95 rounded-3xl shadow-2xl p-6 border border-white/20">
+        <div className="backdrop-blur-xl bg-white/95 rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
           {/* Progress indicator */}
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6">
             {GAMES_CONFIG.map((_, idx) => (
               <div
                 key={idx}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   idx < gameId - 1
-                    ? 'w-8 bg-emerald-500'
+                    ? 'w-6 sm:w-8 bg-emerald-500'
                     : idx === gameId - 1
-                    ? 'w-8 bg-red-500'
+                    ? 'w-6 sm:w-8 bg-red-500'
                     : 'w-2 bg-gray-200'
                 }`}
               />
@@ -88,19 +102,28 @@ export default function GamePage() {
           </div>
 
           <div className="text-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
               Zadanie #{gameId}
             </h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              {game.title}
+            </p>
           </div>
 
           {!isPinVerified && gameId > 1 ? (
-            <div>
+            <div ref={pinContainerRef}>
               <div className="text-center mb-6">
-                <p className="text-gray-600 mb-4">
-                  Wpisz PIN znaleziony przy prezencie
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white text-3xl mb-4 shadow-lg">
+                  🔒
+                </div>
+                <p className="text-gray-600 mb-1 font-medium">
+                  Wpisz PIN z prezentu
                 </p>
-                <PinInput correctPin={requiredPin} onSuccess={handlePinSuccess} />
+                <p className="text-xs text-gray-500">
+                  Znajdziesz go przy poprzednim prezencie
+                </p>
               </div>
+              <PinInput correctPin={requiredPin} onSuccess={handlePinSuccess} />
             </div>
           ) : !showHint ? (
             <>
@@ -143,21 +166,39 @@ function HintScreen({
   onNext: () => void
 }) {
   return (
-    <div>
-      <div className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl mb-5 bg-emerald-50 text-emerald-700">
-        <span className="text-xl">✓</span>
-        <span className="font-semibold">Zadanie ukończone!</span>
+    <div className="space-y-4 sm:space-y-5">
+      {/* Success animation */}
+      <div className="flex flex-col items-center justify-center py-6">
+        <div className="text-6xl sm:text-7xl mb-4 animate-bounce">
+          🎉
+        </div>
+        <h3 className="text-xl sm:text-2xl font-bold text-emerald-600 mb-2">
+          Gratulacje!
+        </h3>
+        <p className="text-sm sm:text-base text-gray-600">
+          Zadanie ukończone pomyślnie
+        </p>
       </div>
 
       {giftLocation && (
-        <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-2xl p-5 mb-5 border border-emerald-200">
-          <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2">
-            🎁 Lokalizacja prezentu
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 sm:p-5 border-2 border-emerald-200 shadow-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-2xl">🎁</span>
+            <div>
+              <div className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
+                Lokalizacja prezentu
+              </div>
+            </div>
           </div>
-          <div className="text-lg font-bold text-emerald-800">{giftLocation}</div>
+          <div className="text-base sm:text-lg font-bold text-emerald-900 mb-3 bg-white/50 rounded-lg p-3">
+            {giftLocation}
+          </div>
           {!isLastGame && (
-            <div className="text-xs text-gray-600 mt-3">
-              💡 Przy prezencie znajdziesz PIN do następnego zadania
+            <div className="flex items-start gap-2 text-xs sm:text-sm text-gray-700 bg-amber-50 rounded-lg p-3 border border-amber-200">
+              <span className="text-lg">💡</span>
+              <span>
+                Przy prezencie znajdziesz <strong>PIN</strong> do następnego zadania
+              </span>
             </div>
           )}
         </div>
@@ -165,9 +206,19 @@ function HintScreen({
 
       <button
         onClick={onNext}
-        className="w-full py-4 rounded-2xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-[0.98]"
+        className="w-full py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold text-base sm:text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-[0.98] flex items-center justify-center gap-2"
       >
-        {isLastGame ? 'Zakończ grę' : 'Wróć do menu'}
+        {isLastGame ? (
+          <>
+            <span>🏆</span>
+            <span>Zakończ grę</span>
+          </>
+        ) : (
+          <>
+            <span>Następne zadanie</span>
+            <span>→</span>
+          </>
+        )}
       </button>
     </div>
   )

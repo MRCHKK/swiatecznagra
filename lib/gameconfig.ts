@@ -17,7 +17,7 @@ export const GAMES_CONFIG: GameConfig[] = [
     id: 1,
     type: 'tictactoe',
     title: 'Gra w kółko i krzyżyk',
-    giftLocation: 'Zajrzyj pod łóżko',
+    giftLocation: 'Salon',
     nextPin: '1605',
   },
   {
@@ -37,7 +37,7 @@ export const GAMES_CONFIG: GameConfig[] = [
     id: 3,
     type: 'hangman',
     title: 'Wisielec',
-    giftLocation: 'Zajrzyj za drzwi wejściowe',
+    giftLocation: 'Zajrzyj do szafy',
     nextPin: '3112',
   },
   {
@@ -57,7 +57,7 @@ export const GAMES_CONFIG: GameConfig[] = [
     id: 5,
     type: 'memory',
     title: 'Gra pamięciowa',
-    giftLocation: 'Zajrzyj pod poduszką',
+    giftLocation: 'Może gdzieś koło telewizora?',
     nextPin: '1912',
   },
   {
@@ -65,10 +65,10 @@ export const GAMES_CONFIG: GameConfig[] = [
     type: 'question',
     title: 'Pytanie 6',
     questionData: {
-      question: 'Kiedy dochodzimy do Nowego Roku?',
-      answers: ['31 grudnia', '1 stycznia', 'Wigilia', 'Trzech Króli'],
-      correctAnswer: 0,
-      clue: 'To ostatni dzień roku',
+      question: 'Co jest najdroższe z niżej wymienionych?',
+      answers: ['miedź', 'platyna', 'piach', 'złoto'],
+      correctAnswer: 3,
+      clue: 'nie wiem',
     },
   },
 ]

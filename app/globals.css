@@ -123,3 +123,43 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Ensure viewport is correct on mobile */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+/* Snowfall animations */
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(110vh) translateX(var(--swing, 0px)) rotate(360deg);
+  }
+}
+
+.snowflake {
+  animation: snowfall var(--duration, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Ensure snowfall is always on top */
+.snowfall-container {
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
