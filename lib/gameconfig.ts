@@ -1,6 +1,6 @@
 export interface GameConfig {
   id: number
-  type: 'tictactoe' | 'question' | 'hangman'
+  type: 'tictactoe' | 'question' | 'hangman' | 'memory'
   title: string
   nextPin?: string
   giftLocation?: string
@@ -55,16 +55,10 @@ export const GAMES_CONFIG: GameConfig[] = [
   },
   {
     id: 5,
-    type: 'question',
-    title: 'Pytanie 5',
+    type: 'memory',
+    title: 'Gra pamięciowa',
     giftLocation: 'Zajrzyj pod poduszką',
     nextPin: '1912',
-    questionData: {
-      question: 'Co się wiesza na choinkę?',
-      answers: ['Kwiaty', 'Ozdoby', 'Liście', 'Pióra'],
-      correctAnswer: 1,
-      clue: 'Są błyszczące',
-    },
   },
   {
     id: 6,
