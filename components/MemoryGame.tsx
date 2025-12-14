@@ -18,6 +18,7 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
   const [flippedCards, setFlippedCards] = useState<number[]>([])
   const [moves, setMoves] = useState(0)
   const [isChecking, setIsChecking] = useState(false)
+  const [matchedPair, setMatchedPair] = useState<number | null>(null)
 
   // Initialize game
   useEffect(() => {
@@ -42,6 +43,7 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
     setCards(shuffled)
     setFlippedCards([])
     setMoves(0)
+    setMatchedPair(null)
   }
 
   const handleCardClick = (cardId: number) => {
@@ -71,7 +73,9 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
       const secondCard = cards.find(c => c.id === secondId)
 
       if (firstCard && secondCard && firstCard.imageId === secondCard.imageId) {
-        // Match found!
+        // Match found! Show enlarged image
+        setMatchedPair(firstCard.imageId)
+        
         setTimeout(() => {
           setCards(prev => 
             prev.map(c => 
@@ -83,12 +87,17 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
           setFlippedCards([])
           setIsChecking(false)
 
+          // Hide enlarged image after 1.5 seconds
+          setTimeout(() => {
+            setMatchedPair(null)
+          }, 1500)
+
           // Check if all cards are matched
           const allMatched = cards.every(c => 
             c.isMatched || c.id === firstId || c.id === secondId
           )
           if (allMatched) {
-            setTimeout(() => onWin(), 500)
+            setTimeout(() => onWin(), 2000)
           }
         }, 600)
       } else {
@@ -130,7 +139,7 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
             className={`aspect-square rounded-lg cursor-pointer transition-all duration-300 transform ${
               card.isFlipped || card.isMatched
                 ? 'rotate-0 bg-white shadow-md'
-                : 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-sm hover:shadow-md hover:scale-105'
+                : 'bg-linear-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-sm hover:shadow-md hover:scale-105'
             } ${
               card.isMatched ? 'opacity-50 cursor-default' : ''
             }`}
@@ -138,7 +147,7 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
             <div className="w-full h-full flex items-center justify-center p-1">
               {card.isFlipped || card.isMatched ? (
                 <img
-                  src={`/memory/${card.imageId}.jpg`}
+                  src={`/memory/${card.imageId}.jpeg`}
                   alt={`Card ${card.imageId}`}
                   className="w-full h-full object-cover rounded"
                   onError={(e) => {
@@ -153,6 +162,28 @@ const MemoryGame: React.FC<MemoryGameProps> = ({ onWin }) => {
           </div>
         ))}
       </div>
+
+      {/* Enlarged matched pair overlay */}
+      {matchedPair && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-6 shadow-2xl animate-in zoom-in duration-300 max-w-sm w-full mx-4">
+            <div className="text-center mb-4">
+              <span className="text-4xl">✨</span>
+              <h3 className="text-xl font-bold text-emerald-600 mt-2">Para znaleziona!</h3>
+            </div>
+            <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg">
+              <img
+                src={`/memory/${matchedPair}.jpeg`}
+                alt={`Matched pair ${matchedPair}`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = `https://placehold.co/400x400/10b981/ffffff?text=${matchedPair}`
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="text-center text-xs text-gray-500 mt-4">
         💡 Znajdź wszystkie 15 par!
