@@ -7,6 +7,7 @@ import Snowfall from '@/components/Snowfall'
 import TicTacToeGame from '@/components/TicTacToeGame'
 import QuestionGame from '@/components/QuestionGame'
 import HangmanGame from '@/components/Hangmangame'
+import MemoryGame from '@/components/MemoryGame'
 import PinInput from '@/components/PinInput'
 import { GAMES_CONFIG } from '@/lib/gameconfig'
 import { unlockNextGame, isGameUnlocked, loadGameState } from '@/lib/gameState'
@@ -107,6 +108,8 @@ export default function GamePage() {
                 <TicTacToeGame onWin={handleGameComplete} />
               ) : game.type === 'hangman' ? (
                 <HangmanGame onWin={handleGameComplete} />
+              ) : game.type === 'memory' ? (
+                <MemoryGame onWin={handleGameComplete} />
               ) : game.type === 'question' && game.questionData ? (
                 <QuestionGame
                   question={game.questionData.question}
