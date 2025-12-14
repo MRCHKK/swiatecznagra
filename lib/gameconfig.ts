@@ -1,6 +1,6 @@
 export interface GameConfig {
   id: number
-  type: 'tictactoe' | 'question'
+  type: 'tictactoe' | 'question' | 'hangman'
   title: string
   nextPin?: string
   giftLocation?: string
@@ -35,16 +35,10 @@ export const GAMES_CONFIG: GameConfig[] = [
   },
   {
     id: 3,
-    type: 'question',
-    title: 'Pytanie 3',
+    type: 'hangman',
+    title: 'Wisielec',
     giftLocation: 'Zajrzyj za drzwi wejściowe',
     nextPin: '3112',
-    questionData: {
-      question: 'Jaki kolor ma głównie choinka?',
-      answers: ['Czerwony', 'Złoty', 'Zielony', 'Niebieski'],
-      correctAnswer: 2,
-      clue: 'Kolor lasu',
-    },
   },
   {
     id: 4,
@@ -76,8 +70,6 @@ export const GAMES_CONFIG: GameConfig[] = [
     id: 6,
     type: 'question',
     title: 'Pytanie 6',
-    giftLocation: null,
-    nextPin: null,
     questionData: {
       question: 'Kiedy dochodzimy do Nowego Roku?',
       answers: ['31 grudnia', '1 stycznia', 'Wigilia', 'Trzech Króli'],

@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import Snowfall from '@/components/Snowfall'
 import TicTacToeGame from '@/components/TicTacToeGame'
 import QuestionGame from '@/components/QuestionGame'
+import HangmanGame from '@/components/Hangmangame'
 import PinInput from '@/components/PinInput'
 import { GAMES_CONFIG } from '@/lib/gameconfig'
 import { unlockNextGame, isGameUnlocked, loadGameState } from '@/lib/gameState'
@@ -104,6 +105,8 @@ export default function GamePage() {
             <>
               {game.type === 'tictactoe' ? (
                 <TicTacToeGame onWin={handleGameComplete} />
+              ) : game.type === 'hangman' ? (
+                <HangmanGame onWin={handleGameComplete} />
               ) : game.type === 'question' && game.questionData ? (
                 <QuestionGame
                   question={game.questionData.question}
@@ -159,7 +162,7 @@ function HintScreen({
 
       <button
         onClick={onNext}
-        className="w-full py-4 rounded-2xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-98"
+        className="w-full py-4 rounded-2xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold text-lg shadow-lg shadow-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/40 active:scale-[0.98]"
       >
         {isLastGame ? 'Zakończ grę' : 'Wróć do menu'}
       </button>
