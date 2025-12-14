@@ -65,12 +65,12 @@ export default function PinInput({ correctPin, onSuccess, onError, buttonText = 
             value={digit}
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
-            className={`w-12 h-14 text-center text-xl font-bold rounded-xl border-2 transition-all duration-200 outline-none bg-white/80 ${
+            className={`w-12 h-14 text-center text-xl font-bold rounded-xl border-2 transition-all duration-200 outline-none shadow-sm ${
               error
-                ? 'border-red-400 bg-red-50/80 text-red-500'
+                ? 'border-red-400 bg-red-50 text-red-600 shadow-red-500/20'
                 : digit
-                  ? 'border-emerald-500 bg-emerald-50/80 text-emerald-700 shadow-md shadow-emerald-500/20'
-                  : 'border-gray-300 text-gray-800 focus:border-emerald-400 focus:bg-white'
+                  ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md shadow-emerald-500/20'
+                  : 'border-gray-300 bg-white text-gray-800 focus:border-emerald-400 focus:shadow-md focus:shadow-emerald-500/10'
             }`}
             style={{ animation: error ? 'shake 0.5s' : 'none' }}
           />
@@ -79,7 +79,7 @@ export default function PinInput({ correctPin, onSuccess, onError, buttonText = 
       
       {error && (
         <p className="text-center text-red-500 text-sm mt-3 font-medium">
-          Nieprawidłowy PIN
+          ❌ Nieprawidłowy PIN
         </p>
       )}
       
@@ -89,7 +89,7 @@ export default function PinInput({ correctPin, onSuccess, onError, buttonText = 
         className={`w-full mt-5 py-3.5 rounded-xl font-bold text-base transition-all duration-200 ${
           isPinComplete
             ? 'bg-linear-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 active:scale-98'
-            : 'bg-gray-200/80 text-gray-400 cursor-not-allowed'
+            : 'bg-gray-200 border-2 border-gray-300 text-gray-400 cursor-not-allowed'
         }`}
       >
         {buttonText}

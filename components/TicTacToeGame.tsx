@@ -242,14 +242,15 @@ export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
             disabled={cell !== null || gameOver || !isPlayerTurn}
             className={`
               aspect-square text-4xl font-bold rounded-xl transition-all duration-200
+              border-3 shadow-sm
               ${
                 cell !== null
-                  ? 'bg-white/60 cursor-not-allowed'
+                  ? 'bg-white border-gray-200 cursor-not-allowed'
                   : isPlayerTurn && !gameOver
-                    ? 'bg-white/40 hover:bg-white/60 cursor-pointer active:scale-95'
-                    : 'bg-white/30 cursor-not-allowed'
+                    ? 'bg-white border-emerald-300 hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-md cursor-pointer active:scale-95'
+                    : 'bg-gray-50 border-gray-200 cursor-not-allowed'
               }
-              ${winner && checkWinnerCell(index) ? 'ring-4 ring-yellow-400 bg-yellow-50/60' : ''}
+              ${winner && checkWinnerCell(index) ? 'ring-4 ring-yellow-400 bg-yellow-50 border-yellow-300' : ''}
             `}
           >
             <span className="drop-shadow-md">{getCellSymbol(cell)}</span>
@@ -260,7 +261,7 @@ export default function TicTacToeGame({ onWin }: TicTacToeGameProps) {
       {gameOver && winner !== 'X' && (
         <button
           onClick={resetGame}
-          className="w-full py-3 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors"
+          className="w-full py-3 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
         >
           Spróbuj ponownie
         </button>

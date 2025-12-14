@@ -51,17 +51,17 @@ export default function QuestionGame({
   const getButtonClass = (index: number) => {
     if (!answered) {
       return cooldownTime > 0
-        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-        : 'bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-transparent active:scale-98'
+        ? 'bg-gray-100 border-2 border-gray-200 text-gray-400 cursor-not-allowed'
+        : 'bg-white border-2 border-gray-200 hover:bg-emerald-50 hover:border-emerald-300 shadow-sm hover:shadow-md active:scale-98'
     }
 
     if (selectedAnswer === index) {
       return index === correctAnswer
-        ? 'bg-emerald-500 text-white border-2 border-emerald-600'
-        : 'bg-red-500 text-white border-2 border-red-600'
+        ? 'bg-emerald-500 text-white border-2 border-emerald-600 shadow-lg shadow-emerald-500/30'
+        : 'bg-red-500 text-white border-2 border-red-600 shadow-lg shadow-red-500/30'
     }
 
-    return 'bg-gray-50 opacity-50'
+    return 'bg-gray-50 border-2 border-gray-200 opacity-50'
   }
 
   return (
@@ -89,24 +89,24 @@ export default function QuestionGame({
       </div>
 
       {cooldownTime > 0 && (
-        <div className="text-center py-4 px-5 bg-red-50 rounded-2xl border border-red-100 mb-4">
+        <div className="text-center py-4 px-5 bg-red-50 rounded-2xl border-2 border-red-200 mb-4 shadow-sm">
           <div className="text-3xl font-bold text-red-500 mb-1">{cooldownTime}s</div>
-          <div className="text-sm text-red-400">Poczekaj przed kolejną próbą</div>
+          <div className="text-sm text-red-600">Poczekaj przed kolejną próbą</div>
         </div>
       )}
 
       {!answered && cooldownTime === 0 && (
         <button
           onClick={() => setShowClue(!showClue)}
-          className="w-full py-3 px-4 rounded-xl bg-amber-50 border-2 border-amber-200 text-amber-700 font-semibold transition-all hover:bg-amber-100"
+          className="w-full py-3 px-4 rounded-xl bg-amber-50 border-2 border-amber-200 text-amber-700 font-semibold transition-all hover:bg-amber-100 hover:border-amber-300 shadow-sm hover:shadow-md"
         >
-          {showClue ? 'Ukryj wskazówkę' : 'Pokaż wskazówkę'}
+          {showClue ? '👁️ Ukryj wskazówkę' : '💡 Pokaż wskazówkę'}
         </button>
       )}
 
       {showClue && (
-        <div className="mt-4 p-4 bg-amber-50 rounded-xl border-l-4 border-amber-400">
-          <p className="text-amber-800 font-medium">{clue}</p>
+        <div className="mt-4 p-4 bg-amber-50 rounded-xl border-2 border-amber-200 shadow-sm">
+          <p className="text-amber-800 font-medium">💡 {clue}</p>
         </div>
       )}
     </div>
