@@ -44,13 +44,13 @@ export default function ChristmasTimer() {
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
   return (
-    <div className="px-4 py-4 bg-white/40">
-      <div className="text-center mb-2">
-        <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+    <div className="px-6 py-6 bg-white/60">
+      <div className="text-center mb-4">
+        <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">
           Do świąt pozostało
         </span>
       </div>
-      <div className="flex justify-center items-center gap-1.5">
+      <div className="flex justify-center items-center gap-2">
         <TimeBlock value={timeLeft.days} label="dni" />
         <TimeSeparator />
         <TimeBlock value={formatNumber(timeLeft.hours)} label="godz" />
@@ -65,13 +65,17 @@ export default function ChristmasTimer() {
 
 function TimeBlock({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="bg-white/80 rounded-lg px-2 py-1.5 shadow-sm min-w-12 text-center">
-      <div className="text-lg font-bold text-red-500 font-mono">{value}</div>
-      <div className="text-[9px] text-gray-500 uppercase font-semibold">{label}</div>
+    <div className="bg-white rounded-xl px-2 py-2 min-w-[48px] text-center" style={{ boxShadow: 'var(--shadow-sm)' }}>
+      <div className="text-xl sm:text-2xl font-bold text-red-600 font-mono leading-none mb-1">
+        {value}
+      </div>
+      <div className="text-[10px] sm:text-xs text-gray-600 uppercase font-semibold">
+        {label}
+      </div>
     </div>
   )
 }
 
 function TimeSeparator() {
-  return <span className="text-lg text-gray-400 font-bold">:</span>
+  return <span className="text-xl text-gray-400 font-bold px-1">:</span>
 }

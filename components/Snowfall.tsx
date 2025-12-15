@@ -18,16 +18,15 @@ export default function Snowfall() {
   useEffect(() => {
     const createSnowflakes = () => {
       const flakes: Snowflake[] = []
-      // 80 płatków śniegu
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 60; i++) {
         flakes.push({
           id: i,
           left: `${Math.random() * 100}%`,
           delay: Math.random() * 10,
-          duration: 8 + Math.random() * 8, // 8-16 sekund
-          size: 2 + Math.random() * 6, // 2-8px
-          opacity: 0.3 + Math.random() * 0.6, // 0.3-0.9
-          swing: Math.random() * 80 - 40, // -40 do 40px dla kołysania
+          duration: 8 + Math.random() * 8,
+          size: 2 + Math.random() * 6,
+          opacity: 0.3 + Math.random() * 0.6,
+          swing: Math.random() * 80 - 40,
         })
       }
       return flakes
@@ -37,7 +36,7 @@ export default function Snowfall() {
   }, [])
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 9999 }}>
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1000 }} aria-hidden="true">
       {snowflakes.map((flake) => (
         <div
           key={flake.id}
@@ -47,9 +46,9 @@ export default function Snowfall() {
             width: `${flake.size}px`,
             height: `${flake.size}px`,
             opacity: flake.opacity,
-            boxShadow: '0 0 6px rgba(255, 255, 255, 0.8)',
+            boxShadow: '0 0 4px rgba(255, 255, 255, 0.6)',
             filter: 'blur(0.5px)',
-            // @ts-ignore - custom CSS properties
+            // @ts-ignore
             '--duration': `${flake.duration}s`,
             '--delay': `${-flake.delay}s`,
             '--swing': `${flake.swing}px`,

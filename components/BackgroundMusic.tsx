@@ -8,12 +8,10 @@ export default function BackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    // Stwórz element audio
     audioRef.current = new Audio('/music/jingle-bells.mp3')
     audioRef.current.loop = true
-    audioRef.current.volume = 0.3 // 30% głośności
+    audioRef.current.volume = 0.3
 
-    // Sprawdź czy użytkownik już włączył muzykę wcześniej
     const musicPreference = localStorage.getItem('music-enabled')
     if (musicPreference === 'true') {
       playMusic()
@@ -61,30 +59,24 @@ export default function BackgroundMusic() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex gap-2">
+    <div className="fixed bottom-4 right-4 flex gap-3 safe-bottom" style={{ zIndex: 100 }}>
       <button
         onClick={toggleMusic}
-        className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-2 border-red-200 flex items-center justify-center transition-all hover:scale-110 hover:shadow-xl active:scale-95"
-        title={isPlaying ? "Zatrzymaj muzykę" : "Odtwórz muzykę"}
+        aria-label={isPlaying ? "Zatrzymaj muzykę" : "Odtwórz muzykę"}
+        className="w-14 h-14 rounded-full bg-white shadow-lg border-2 border-red-200 flex items-center justify-center transition-all hover:scale-110 hover:shadow-xl active:scale-95"
+        style={{ minWidth: '56px', minHeight: '56px' }}
       >
-        {isPlaying ? (
-          <span className="text-xl">⏸️</span>
-        ) : (
-          <span className="text-xl">🎵</span>
-        )}
+        <span className="text-2xl">{isPlaying ? '⏸️' : '🎵'}</span>
       </button>
 
       {isPlaying && (
         <button
           onClick={toggleMute}
-          className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border-2 border-red-200 flex items-center justify-center transition-all hover:scale-110 hover:shadow-xl active:scale-95"
-          title={isMuted ? "Wyłącz wyciszenie" : "Wycisz"}
+          aria-label={isMuted ? "Wyłącz wyciszenie" : "Wycisz"}
+          className="w-14 h-14 rounded-full bg-white shadow-lg border-2 border-red-200 flex items-center justify-center transition-all hover:scale-110 hover:shadow-xl active:scale-95 slide-in"
+          style={{ minWidth: '56px', minHeight: '56px' }}
         >
-          {isMuted ? (
-            <span className="text-xl">🔇</span>
-          ) : (
-            <span className="text-xl">🔊</span>
-          )}
+          <span className="text-2xl">{isMuted ? '🔇' : '🔊'}</span>
         </button>
       )}
     </div>
