@@ -30,7 +30,7 @@ export default function Page() {
   const gameState = loadGameState()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 pb-24 relative overflow-hidden slide-in">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 pb-24 relative overflow-hidden slide-in">
       <Snowfall />
       
       <div className="relative z-10 w-full max-w-md">
@@ -77,7 +77,7 @@ export default function Page() {
             {gameState.currentGame <= 6 ? (
               <Link
                 href={`/game/${gameState.currentGame}`}
-                className="block w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-center shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="block w-full py-4 rounded-xl bg-linear-to-r from-emerald-500 to-emerald-600 text-white font-bold text-center shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Kontynuuj grę #{gameState.currentGame}
               </Link>
@@ -110,13 +110,13 @@ export default function Page() {
 
 function StartScreen({ onStart, isTransitioning }: { onStart: () => void; isTransitioning: boolean }) {
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 pb-24 relative overflow-hidden transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-900 p-4 pb-24 relative overflow-hidden transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
       <Snowfall />
 
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/90 backdrop-blur-lg rounded-2xl overflow-hidden" style={{ boxShadow: 'var(--shadow-lg)' }}>
           {/* Header section */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-8 text-center">
+          <div className="bg-linear-to-r from-red-600 to-red-700 px-6 py-8 text-center">
             <div className="text-5xl mb-3 animate-bounce">
               🎄
             </div>
